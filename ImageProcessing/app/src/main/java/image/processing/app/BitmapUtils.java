@@ -8,6 +8,10 @@ import android.graphics.Color;
  */
 public class BitmapUtils {
 
+    public static double warmthTest(Bitmap key, Bitmap test, double threshold){
+        return -1;
+    }
+
     public static Bitmap extractColor(Bitmap bitmap, int color, double threshold){
         int [][] pixels = getPixels(bitmap);
         int bWidth = bitmap.getWidth();
@@ -38,6 +42,8 @@ public class BitmapUtils {
                 }
             }
         }
+
+        return  newMap;
     }
 
     public boolean checkColor (int r, int g, int b, int color, double threshold){
@@ -45,9 +51,9 @@ public class BitmapUtils {
         int cG = Color.green(color);
         int cB = Color.blue(color);
 
-        double rr = (r-_r)*(r-_r);
-        double gg = (g-_g)*(g-_g);
-        double bb = (b-_b)*(b-_b);
+        double rr = (r-cR)*(r-cR);
+        double gg = (g-cG)*(g-cG);
+        double bb = (b-cB)*(b-cB);
 
         double x = Math.sqrt(rr+bb+gg);
 
