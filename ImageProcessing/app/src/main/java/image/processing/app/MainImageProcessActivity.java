@@ -48,7 +48,6 @@ public class MainImageProcessActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //starts the camera up
-                buttonPressed = 1;
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
@@ -61,11 +60,8 @@ public class MainImageProcessActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //starts the camera up
-                buttonPressed = 1;
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
-
             }
         });
 
@@ -74,12 +70,74 @@ public class MainImageProcessActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //starts the camera up
-                compareImages();
+                int tally = 0;
+                /*if(!standardCompareImages()){
+                    tally++;
+                };*/
+                if(!sectionEmbossFilterCompare()){
+                    tally++;
+                }
+                if(tally == 1){
+                    imageView.setImageResource(R.drawable.dontmatch);
+                }
+                else{
+                    imageView.setImageResource(R.drawable.theymatch);
+                }
             }
         });
     }
 
-    public void compareImages(){
+    public boolean sectionEmbossFilterCompare(){
+        String root = Environment.getExternalStorageDirectory().toString();
+
+        File[] files = getListFiles(new File(root + "/user_images"));
+        Bitmap[] bitmap = new Bitmap[files.length];
+        for(int i = 0; i < files.length; i++){
+            bitmap[i] = embossFilter(BitmapFactory.decodeFile(files[i].getAbsolutePath()));
+            SaveImage(bitmap[i], "/emboss_filter");
+        }
+        //compare hisograms based on sections
+        int[][][] histo = new int[2][10][64];
+
+
+        Bitmap[][] sectionBitmap = new Bitmap[2][10];
+        for(int i = 0; i < 2; i++){
+            sectionBitmap[i][0] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0),    (int)(bitmap[i].getHeight() * 0),    (int)(bitmap[i].getWidth() * 1  ),  (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][1] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0   ), (int)(bitmap[i].getHeight() * 0.25), (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][2] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25), (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][3] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0.5 ), (int)(bitmap[i].getHeight() * 0.25), (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][4] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0.75), (int)(bitmap[i].getHeight() * 0.25), (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][5] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0   ), (int)(bitmap[i].getHeight() * 0.5),  (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][6] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.5),  (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][7] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0.5 ), (int)(bitmap[i].getHeight() * 0.5),  (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][8] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0.75), (int)(bitmap[i].getHeight() * 0.5),  (int)(bitmap[i].getWidth() * 0.25), (int)(bitmap[i].getHeight() * 0.25));
+            sectionBitmap[i][9] = Bitmap.createBitmap (bitmap[i], (int)(bitmap[i].getWidth() * 0   ), (int)(bitmap[i].getHeight() * 0.75), (int)(bitmap[i].getWidth() * 1),    (int)(bitmap[i].getHeight() * 0.25));
+        }
+
+
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 10; j++){
+                histo[i][j] = genHistogram(sectionBitmap[i][j]);
+            }
+        }
+
+        int tallyCount = 0;
+        int threshold = 12000;
+        for(int i = 0; i < 10; i++){
+            if(compareHistos(histo[0][i], histo[1][i], threshold)){
+                tallyCount++;
+            }
+        }
+
+        if(tallyCount > 5){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean standardCompareImages(){
         String root = Environment.getExternalStorageDirectory().toString();
 
         File[] files = getListFiles(new File(root + "/user_images"));
@@ -87,32 +145,31 @@ public class MainImageProcessActivity extends Activity {
         for(int i = 0; i < files.length; i++){
             bitmap[i] = BitmapFactory.decodeFile(files[i].getAbsolutePath());
         }
-        Random rnd = new Random();
-        int x = rnd.nextInt(2);
-        imageView.setImageBitmap(bitmap[x]);
 
         int[][] histo = new int[bitmap.length][64];
         for(int i = 0; i < bitmap.length; i++){
             histo[i] = genHistogram(bitmap[i]);
         }
-        if(compareHistos(histo[0], histo[1])){
-            imageView.setImageResource(R.drawable.theymatch);
+        if(compareHistos(histo[0], histo[1], 370000)){
+            //imageView.setImageResource(R.drawable.theymatch);
+            return true;
         }
         else{
-            imageView.setImageResource(R.drawable.dontmatch);
+            //imageView.setImageResource(R.drawable.dontmatch);
+            return false;
         }
     }
 
-    public boolean compareHistos(int[] histo1, int[] histo2){
+    public boolean compareHistos(int[] histo1, int[] histo2, int threshold){
         int[] diff = new int[histo1.length];
         int diffTally = 0;
         for(int i = 0; i < histo1.length; i++){
-            diff[i]= (int)Math.pow(histo1[i] - histo2[i], 2);
+            diff[i]= (int)Math.sqrt(Math.abs(Math.pow(histo1[i],2) - Math.pow(histo2[i], 2)));
 
-            diffTally+=diff[i];
+            diffTally += diff[i];
         }
         double test = Math.sqrt(diffTally);
-        if(Math.sqrt(diffTally) > 30000){
+        if(diffTally > threshold){
             return false;
         }
         else{
@@ -195,7 +252,7 @@ public class MainImageProcessActivity extends Activity {
                     //code for displaying an image
 
                     //imageView.setImageBitmap(bitmap);
-                    //bitmap = embossFilter(bitmap);
+                    //
                     imageView.setImageBitmap(bitmap);
                     SaveImage(bitmap, "/user_images");
 
