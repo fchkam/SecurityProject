@@ -6,11 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,14 +17,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.graphics.Matrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class MainImageProcessActivity extends Activity {
@@ -97,8 +91,79 @@ public class MainImageProcessActivity extends Activity {
         int x = rnd.nextInt(2);
         imageView.setImageBitmap(bitmap[x]);
 
-
+        int[][] histo = new int[bitmap.length][64];
+        for(int i = 0; i < bitmap.length; i++){
+            histo[i] = genHistogram(bitmap[i]);
+        }
+        if(compareHistos(histo[0], histo[1])){
+            imageView.setImageResource(R.drawable.theymatch);
+        }
+        else{
+            imageView.setImageResource(R.drawable.dontmatch);
+        }
     }
+
+    public boolean compareHistos(int[] histo1, int[] histo2){
+        int[] diff = new int[histo1.length];
+        int diffTally = 0;
+        for(int i = 0; i < histo1.length; i++){
+            diff[i]= (int)Math.pow(histo1[i] - histo2[i], 2);
+
+            diffTally+=diff[i];
+        }
+        double test = Math.sqrt(diffTally);
+        if(Math.sqrt(diffTally) > 30000){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    public int[] genHistogram(Bitmap bitmap){
+        int[] histogram = new int[4 * 4 * 4];
+
+        int[] temp = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        int[][] pixels = new int[bitmap.getHeight()][bitmap.getWidth()];
+
+        Bitmap.Config conf = Bitmap.Config.RGB_565; // see other conf types
+        Bitmap newMap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), conf);
+
+        for(int i = 0; i < bitmap.getHeight(); i++){
+            for(int j = 0; j < bitmap.getWidth(); j++){
+                pixels[i][j] = temp[i * bitmap.getWidth()+ j];
+            }
+        }
+
+        for(int i = 0; i < bitmap.getHeight()-1; i++){
+            for(int j = 0; j < bitmap.getWidth()-1; j++){
+                int r = Color.red(pixels[i][j]);
+                int g = Color.green(pixels[i][j]);
+                int b = Color.blue(pixels[i][j]);
+                histogram[checkRange(r) + checkRange(g)*4 + checkRange(b) * 16] += 1;
+            }
+        }
+
+        return histogram;
+    }
+
+    public int checkRange(int x){
+        if(x > 0 && x <= 63){
+            return 0;
+        }
+        else if(x > 63 && x <= 127){
+            return 1;
+        }
+        else if(x > 127 && x <= 191){
+            return 2;
+        }
+        else{
+            return 3;
+        }
+    }
+
     private File[] getListFiles(File parentDir) {
         ArrayList<File> inFiles = new ArrayList<File>();
         File[] files = parentDir.listFiles();
@@ -130,7 +195,7 @@ public class MainImageProcessActivity extends Activity {
                     //code for displaying an image
 
                     //imageView.setImageBitmap(bitmap);
-                    bitmap = embossFilter(bitmap);
+                    //bitmap = embossFilter(bitmap);
                     imageView.setImageBitmap(bitmap);
                     SaveImage(bitmap, "/user_images");
 
@@ -144,6 +209,7 @@ public class MainImageProcessActivity extends Activity {
             c1.close();
         }
     }
+
     private void SaveImage(Bitmap finalBitmap, String path) {
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + path);
