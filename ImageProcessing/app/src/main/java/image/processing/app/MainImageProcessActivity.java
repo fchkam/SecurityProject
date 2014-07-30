@@ -80,6 +80,7 @@ public class MainImageProcessActivity extends Activity {
                 float embossValue = sectionEmbossFilterCompare();
                 float colorCompare = standardCompareImages();
 
+
                 TextView t = (TextView)findViewById(R.id.textView2);
                 t.setText("Edge Detection %: " + Float.toString(embossValue * 100.0f)  + "%");
 
@@ -122,10 +123,45 @@ public class MainImageProcessActivity extends Activity {
                 File[] files = getListFiles(new File(root + "/user_images"));
                 for(int i = 0; i < files.length; i++){
                     files[i].delete();
-
                 }
             }
         });
+    }
+
+    public float humanDetection(Bitmap bitmap){
+        float tally = 0;
+        int[][] pixels = new int[bitmap.getHeight()][bitmap.getWidth()];
+
+        int[] temp = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        Bitmap.Config conf = Bitmap.Config.RGB_565; // see other conf types
+        Bitmap newMap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), conf);
+
+        for(int i = 0; i < bitmap.getHeight(); i++){
+            for(int j = 0; j < bitmap.getWidth(); j++){
+                pixels[i][j] = temp[i * bitmap.getWidth()+ j];
+            }
+        }
+
+        for(int i = 0; i < bitmap.getHeight(); i++){
+            for(int j = 0; j < bitmap.getWidth(); j++){
+                int r = Color.red(pixels[i][j]);
+                int g = Color.green(pixels[i][j]);
+                int b = Color.blue(pixels[i][j]);
+                if(checkHumanRange(r, g, b)){
+                    tally += 1.0f;
+                }
+            }
+        }
+        return tally/(float)(bitmap.getHeight() * bitmap.getHeight());
+    }
+
+    public boolean checkHumanRange(int r, int g, int b){
+        if((r < 255 && r > 110) && (g  < 244 && g > 90) && (b < 241 && b > 80)){
+            return true;
+        }
+        return false;
     }
 
     public float sectionEmbossFilterCompare(){
@@ -176,7 +212,7 @@ public class MainImageProcessActivity extends Activity {
         }
 
         float tallyCount = 0;
-        int threshold = 6000;
+        int threshold = 5500;
 
         for(int i = 0; i < 20; i++){
             tallyCount +=  0.05 * compareHistos(histo[0][i], histo[1][i], threshold);
@@ -214,7 +250,7 @@ public class MainImageProcessActivity extends Activity {
             return 1;
         }
 
-        return threshold/diffTally;
+        return (float)threshold/(float)diffTally;
     }
 
     public int[] genHistogram(Bitmap bitmap){
@@ -292,6 +328,10 @@ public class MainImageProcessActivity extends Activity {
 
                     //imageView.setImageBitmap(bitmap);
                     //
+                    float humanDetect = humanDetection(bitmap);
+                    TextView t = (TextView)findViewById(R.id.textView3);
+                    t.setText("Human %: " + Float.toString(humanDetect * 100.0f)  + "%");
+
                     imageView.setImageBitmap(bitmap);
                     SaveImage(bitmap, "/user_images");
 
