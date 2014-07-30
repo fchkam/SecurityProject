@@ -396,9 +396,7 @@ public class MainImageProcessActivity extends Activity {
         int emboss_w = 3;
         int emboss_h = 3;
 
-        int sumr = 0;
-        int sumg = 0;
-        int sumb = 0;
+        int sumVal = 0;
 
         int[][] emboss_filter =
                 {
@@ -406,7 +404,7 @@ public class MainImageProcessActivity extends Activity {
                         {0,-1,0},
                         {0,0,-1}
                 };
-        int emboss_sum=1;
+        int emboss_sum = 1;
 
         int[] temp = new int[bitmap.getWidth() * bitmap.getHeight()];
 
@@ -424,40 +422,43 @@ public class MainImageProcessActivity extends Activity {
             }
         }
 
-        for(int i=1;i<bitmap.getHeight()-1;i++){
-            for(int j=1;j<bitmap.getWidth()-1;j++){
+        for(int i = 1;i < bitmap.getHeight() - 1; i++){
+            for(int j = 1;j < bitmap.getWidth() - 1; j++){
 
                 int r = Color.red(pixels[i][j]);
                 int g = Color.green(pixels[i][j]);
                 int b = Color.blue(pixels[i][j]);
-                int h=(r+g+b)/3;
-                if(h>255)
-                    h=255;
-                if(h<0)
-                    h=0;
+                int result = (r + g + b)/3;
 
-                newMap.setPixel(j, i, Color.rgb(h, h, h));
+                if(result > 255){
+                    result = 255;
+                }
+                if(result < 0){
+                    result = 0;
+                }
+
+                newMap.setPixel(j, i, Color.rgb(result, result, result));
             }
         }
 
-        for(int i=1;i<bitmap.getHeight()-1;i++){
-            for(int j=1;j<bitmap.getWidth()-1;j++){
-                sumr=0;
-                for(int k=0;k<emboss_w;k++){
-                    for(int l=0;l<emboss_h;l++){
+        for(int i = 1; i < bitmap.getHeight() - 1; i++){
+            for(int j=1;j < bitmap.getWidth() - 1; j++){
+                sumVal = 0;
+                for(int k = 0;k < emboss_w; k++){
+                    for(int l = 0;l < emboss_h; l++){
 
-                        int r = Color.red(pixels[i-((emboss_w-1)>>1)+k][j-((
-                                emboss_h-1)>>1)+l]);
-                        sumr+=r*emboss_filter[k][l];
+                        int r = Color.red(pixels[i - ((emboss_w - 1) >> 1) + k][j-((emboss_h - 1) >> 1) + l]);
+                        sumVal += r * emboss_filter[k][l];
                     }
                 }
-                sumr/=emboss_sum;
-                sumr+=128;
-                if(sumr>255)
-                    sumr=255;
-                if(sumr<0)
-                    sumr=0;
-                newMap.setPixel(j, i, Color.rgb(sumr, sumr, sumr));
+                sumVal /= emboss_sum;
+                sumVal += 128;
+                if(sumVal > 255){
+                    sumVal = 255;
+                }
+                if(sumVal < 0)
+                    sumVal = 0;
+                newMap.setPixel(j, i, Color.rgb(sumVal, sumVal, sumVal));
             }
         }
         return newMap;
