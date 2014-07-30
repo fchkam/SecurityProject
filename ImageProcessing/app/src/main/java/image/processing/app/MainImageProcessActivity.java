@@ -212,7 +212,7 @@ public class MainImageProcessActivity extends Activity {
         }
 
         float tallyCount = 0;
-        int threshold = 5500;
+        int threshold = 4000;
 
         for(int i = 0; i < 20; i++){
             tallyCount +=  0.05 * compareHistos(histo[0][i], histo[1][i], threshold);
@@ -234,14 +234,14 @@ public class MainImageProcessActivity extends Activity {
         for(int i = 0; i < bitmap.length; i++){
             histo[i] = genHistogram(bitmap[i]);
         }
-        return compareHistos(histo[0], histo[1], 360000);
+        return compareHistos(histo[0], histo[1], 220000);
     }
 
     public float compareHistos(int[] histo1, int[] histo2, int threshold){
         int[] diff = new int[histo1.length];
         int diffTally = 0;
         for(int i = 0; i < histo1.length; i++){
-            diff[i]= (int)Math.sqrt(Math.abs(Math.pow(histo1[i],2) - Math.pow(histo2[i], 2)));
+            diff[i]= (int)Math.sqrt(Math.abs(Math.pow(histo1[i],2) - Math.pow(histo2[i], 2))/2);
 
             diffTally += diff[i];
         }
