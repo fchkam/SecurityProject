@@ -13,6 +13,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
@@ -66,11 +67,10 @@ public class CryptoManager {
 
 
     public void initCiphers(byte[] keybytes) {
-
-        PBEKeySpec pbeKeySpec;
-        PBEParameterSpec pbeParamSpec;
-        SecretKeyFactory keyFac;
-
+        try{
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(128);
+        SecretKey skey = keyGen.generateKey();
         byte[] salt = {
                 (byte) 0xc7, (byte) 0x73, (byte) 0x21, (byte) 0x8c,
                 (byte) 0x7e, (byte) 0xc8, (byte) 0xee, (byte) 0x99,
@@ -79,8 +79,8 @@ public class CryptoManager {
         };
 
         IvParameterSpec ivSpec = new IvParameterSpec(salt);
-        SecretKeySpec newKey = new SecretKeySpec(keybytes, "AES");
-        try {
+        SecretKeySpec newKey = new SecretKeySpec(skey.getEncoded(), "AES");
+
             encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             encryptCipher.init(Cipher.ENCRYPT_MODE, newKey, ivSpec);
@@ -88,5 +88,6 @@ public class CryptoManager {
         } catch (Exception e) {
             Log.v("tag", e.toString());
         }
+
     }
 }
