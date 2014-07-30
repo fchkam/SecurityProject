@@ -1,0 +1,80 @@
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/button1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take User Photo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Input Password Photo"
+        android:layout_alignTop="@+id/button1"
+        android:layout_alignRight="@+id/buttonDecrypt"
+        android:layout_alignEnd="@+id/buttonDecrypt" />
+
+    <Button android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Compare"
+        android:layout_marginBottom="43dp"
+        android:layout_above="@+id/buttonDecrypt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edge Detection: 0.0"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignTop="@+id/button3"
+        android:layout_toRightOf="@+id/buttonEncrypt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color Comparison: 0.0"
+        android:id="@+id/textView1"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EncryptPhoto"
+        android:id="@+id/buttonEncrypt"
+        android:layout_gravity="right"
+        android:layout_below="@+id/imageView1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="180dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decrypt Saved Key"
+        android:id="@+id/buttonDecrypt"
+        android:layout_alignTop="@+id/buttonEncrypt"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>

@@ -15,20 +15,17 @@
     <Button android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take User Photo"
-        android:layout_gravity="center_horizontal" />
+            android:text="Take User Photo" />
 
     <Button android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Input Password Photo"
-        android:layout_gravity="center_horizontal" />
+        android:text="Input Password Photo" />
 
     <Button android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Compare"
-        android:layout_gravity="center_horizontal" />
+        android:text="Compare" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,14 +38,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
-        android:id="@+id/textView1" />
+        android:id="@+id/textView1"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="EncryptPhoto"
         android:id="@+id/buttonEncrypt"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="right" />
 
     <Button
         android:layout_width="wrap_content"
