@@ -29,7 +29,19 @@
         android:text="Compare"
         android:layout_gravity="center_horizontal" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EncryptPhoto"
+        android:id="@+id/buttonEncrypt"
+        android:layout_gravity="center_horizontal" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decrypt Saved Key"
+        android:id="@+id/buttonDecrypt"
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>

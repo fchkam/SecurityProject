@@ -2,6 +2,7 @@ package image.processing.app;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainImageProcessActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888;
@@ -83,6 +86,25 @@ public class MainImageProcessActivity extends Activity {
                 else{
                     imageView.setImageResource(R.drawable.theymatch);
                 }
+            }
+        });
+
+        Button encrypt = (Button) this.findViewById(R.id.buttonEncrypt);
+        encrypt.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, 133);
+            }
+        });
+
+        Button decrypt = (Button) this.findViewById(R.id.buttonDecrypt);
+        decrypt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fp = Environment.getExternalStorageDirectory().getAbsolutePath() + "/image_processing/key.jpg";
+                Bitmap decrypted = CryptoManager.getInstance().decryptImage(new File(fp));
+                imageView.setImageBitmap(decrypted);
             }
         });
     }
@@ -264,6 +286,31 @@ public class MainImageProcessActivity extends Activity {
 
             }
             c1.close();
+        } else if(requestCode == 133 && resultCode == RESULT_OK){
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+
+            String fp = Environment.getExternalStorageDirectory().getAbsolutePath() + "/image_processing";
+
+            File dir = new File(fp);
+            if (!dir.exists()){
+                dir.mkdirs();
+            }
+
+            try {
+                File outFile = new File(dir, "key.jpg");
+                FileOutputStream outStream = new FileOutputStream(outFile);
+                CryptoManager.getInstance().encryptFile(outStream, bitmap);
+            } catch (IOException exception){
+
+            }
         }
     }
 

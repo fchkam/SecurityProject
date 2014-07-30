@@ -38,11 +38,13 @@ public class CryptoManager {
         return INSTANCE;
     }
 
-    public void encryptFile(File imageFile) {
-        try {
-            FileOutputStream fos = new FileOutputStream(imageFile);
-            CipherOutputStream cos = new CipherOutputStream(fos, encryptCipher);
-        } catch (IOException e) {
+    public void encryptFile(FileOutputStream fos, Bitmap image) {
+        try{
+        CipherOutputStream cos = new CipherOutputStream(fos, encryptCipher);
+        image.compress(Bitmap.CompressFormat.JPEG, 100, cos);
+        cos.flush();
+        cos.close();}
+        catch (Exception e){
 
         }
     }
@@ -76,8 +78,8 @@ public class CryptoManager {
         try {
             keyFac = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
             SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
-            Cipher encryptCipher = Cipher.getInstance("PBEWithMD5AndDES");
-            Cipher decryptCipher = Cipher.getInstance("PBEWithMD5AndDES");
+            encryptCipher = Cipher.getInstance("PBEWithMD5AndDES");
+            decryptCipher = Cipher.getInstance("PBEWithMD5AndDES");
             encryptCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
             decryptCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
         } catch (Exception e) {
