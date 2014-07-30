@@ -11,9 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_below="@+id/button1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/button2"
-        android:layout_alignEnd="@+id/button2" />
+        android:layout_alignParentStart="true" />
 
     <Button android:id="@+id/button1"
         android:layout_width="wrap_content"
@@ -37,30 +35,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Compare"
+        android:background="@drawable/button_shape"
         android:layout_below="@+id/imageView1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/button_shape"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="39dp"
+        android:layout_alignRight="@+id/deletePhotos"
+        android:layout_alignEnd="@+id/deletePhotos" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edge Detection: 0.0"
+        android:text="Edge Detection: 0.0%"
         android:id="@+id/textView2"
         android:layout_gravity="center_horizontal"
         android:layout_alignTop="@+id/button3"
-        android:layout_toRightOf="@+id/buttonEncrypt" />
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignStart="@+id/textView1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Color Comparison: 0.0"
+        android:text="Color Comparison: 0.0%"
         android:id="@+id/textView1"
         android:layout_gravity="center_horizontal"
-        android:layout_alignBottom="@+id/button3"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2" />
+        android:layout_below="@+id/textView2"
+        android:layout_toRightOf="@+id/button1" />
 
     <Button
         android:layout_width="wrap_content"
@@ -91,9 +91,18 @@
         android:text="Delete Photos"
         android:background="@drawable/button_shape"
         android:id="@+id/deletePhotos"
+        android:layout_below="@+id/textView3"
+        android:layout_alignRight="@+id/buttonEncrypt"
+        android:layout_alignEnd="@+id/buttonEncrypt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Human Percentage: 0.0%"
+        android:id="@+id/textView3"
         android:layout_below="@+id/textView1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignStart="@+id/textView1" />
 
 
 </RelativeLayout>
