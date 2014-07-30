@@ -3,13 +3,14 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher"
-        android:layout_width="wrap_content"/>
+        android:layout_width="wrap_content"
+        />
 
     <Button android:id="@+id/button1"
             android:layout_width="wrap_content"
@@ -29,7 +30,19 @@
         android:text="Compare"
         android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textView1"
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>
