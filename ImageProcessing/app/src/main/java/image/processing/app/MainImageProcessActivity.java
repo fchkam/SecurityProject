@@ -81,10 +81,10 @@ public class MainImageProcessActivity extends Activity {
                 float colorCompare = standardCompareImages();
 
                 TextView t = (TextView)findViewById(R.id.textView2);
-                t.setText(Float.toString(embossValue));
+                t.setText("Edge Detection %: " + Float.toString(embossValue * 100.0f)  + "%");
 
                 TextView t2 = (TextView)findViewById(R.id.textView1);
-                t2.setText(Float.toString(colorCompare));
+                t2.setText("Color %: " + Float.toString(colorCompare * 100.0f)  + "%");
 
                 /*if(!sectionEmbossFilterCompare() || !standardCompareImages()){
                     imageView.setImageResource(R.drawable.dontmatch);
@@ -111,6 +111,19 @@ public class MainImageProcessActivity extends Activity {
                 String fp = Environment.getExternalStorageDirectory().getAbsolutePath() + "/image_processing/key.jpg";
                 Bitmap decrypted = CryptoManager.getInstance().decryptImage(new File(fp));
                 imageView.setImageBitmap(decrypted);
+            }
+        });
+
+        Button delete = (Button) this.findViewById(R.id.deletePhotos);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String root = Environment.getExternalStorageDirectory().toString();
+                File[] files = getListFiles(new File(root + "/user_images"));
+                for(int i = 0; i < files.length; i++){
+                    files[i].delete();
+
+                }
             }
         });
     }
